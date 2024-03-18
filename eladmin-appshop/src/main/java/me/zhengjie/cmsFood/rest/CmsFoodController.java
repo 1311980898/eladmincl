@@ -67,6 +67,7 @@ public class CmsFoodController {
     @ApiOperation("新增cmsFood")
     @AnonymousAccess
     public ResponseEntity<Object> createCmsFood(@Validated @RequestBody CmsFood resources){
+        resources.setPhotoPath("https://img0.baidu.com/it/u=2181227728,1888178858&fm=253&fmt=auto&app=138&f=JPEG?w=749&h=500");
         cmsFoodService.create(resources);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
