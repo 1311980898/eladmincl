@@ -98,6 +98,33 @@ public class LocalStorageServiceImpl implements LocalStorageService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public LocalStorage createV2(String name, MultipartFile multipartFile) {
+        FileUtil.checkSize(properties.getMaxSize(), multipartFile.getSize());
+        String suffix = FileUtil.getExtensionName(multipartFile.getOriginalFilename());
+        String type = FileUtil.getFileType(suffix);
+        File file = FileUtil.upload(multipartFile, properties.getPath().getPath() +  File.separator);
+        if(ObjectUtil.isNull(file)){
+            throw new BadRequestException("上传失败");
+        }
+        try {
+            name = StringUtils.isBlank(name) ? FileUtil.getFileNameNoEx(multipartFile.getOriginalFilename()) : name;
+            LocalStorage localStorage = new LocalStorage(
+                    file.getName(),
+                    name,
+                    suffix,
+                    file.getPath(),
+                    type,
+                    FileUtil.getSize(multipartFile.getSize())
+            );
+            return localStorageRepository.save(localStorage);
+        }catch (Exception e){
+            FileUtil.del(file);
+            throw e;
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public void update(LocalStorage resources) {
         LocalStorage localStorage = localStorageRepository.findById(resources.getId()).orElseGet(LocalStorage::new);
         ValidationUtil.isNull( localStorage.getId(),"LocalStorage","id",resources.getId());
@@ -130,4 +157,5 @@ public class LocalStorageServiceImpl implements LocalStorageService {
         }
         FileUtil.downloadExcel(list, response);
     }
+
 }

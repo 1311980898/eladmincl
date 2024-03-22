@@ -190,6 +190,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
             String fileName = name + nowStr + "." + suffix;
             String path = filePath + fileName;
             // getCanonicalFile 可解析正确各种路径
+            path = path.replace("\\", "/"); // 替换所有的反斜杠为正斜杠
             File dest = new File(path).getCanonicalFile();
             // 检测是否存在目录
             if (!dest.getParentFile().exists()) {

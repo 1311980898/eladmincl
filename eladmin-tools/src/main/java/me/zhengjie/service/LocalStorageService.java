@@ -80,4 +80,6 @@ public interface LocalStorageService {
      * @throws IOException /
      */
     void download(List<LocalStorageDto> localStorageDtos, HttpServletResponse response) throws IOException;
+
+    LocalStorage createV2(String o, MultipartFile file);
 }

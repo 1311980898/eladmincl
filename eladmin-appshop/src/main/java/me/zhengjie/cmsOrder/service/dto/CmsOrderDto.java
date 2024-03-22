@@ -59,4 +59,6 @@ public class CmsOrderDto implements Serializable {
     private Integer orderNum;
 
     private CmsFoodDto food;
+    private String foodName;
+    private String foodUrl;
 }

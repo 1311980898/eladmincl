@@ -118,6 +118,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 阿里巴巴 druid
                 //前端请求接口放行
                 .antMatchers("/web/**").permitAll()
+                .antMatchers("/api/localStorage/picturesV2").permitAll()
                 .antMatchers("/druid/**").permitAll()
                 // 放行OPTIONS请求
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()

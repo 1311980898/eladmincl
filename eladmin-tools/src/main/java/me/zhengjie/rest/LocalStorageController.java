@@ -71,6 +71,7 @@ public class LocalStorageController {
 
     @ApiOperation("上传图片")
     @PostMapping("/pictures")
+    @CrossOrigin(origins = "*") // 允许来自任何域的跨域请求
     public ResponseEntity<LocalStorage> uploadPicture(@RequestParam MultipartFile file){
         // 判断文件是否为图片
         String suffix = FileUtil.getExtensionName(file.getOriginalFilename());
@@ -78,6 +79,19 @@ public class LocalStorageController {
             throw new BadRequestException("只能上传图片");
         }
         LocalStorage localStorage = localStorageService.create(null, file);
+        return new ResponseEntity<>(localStorage, HttpStatus.OK);
+    }
+
+    @ApiOperation("上传图片")
+    @PostMapping("/picturesV2")
+    @CrossOrigin(origins = "*") // 允许来自任何域的跨域请求
+    public ResponseEntity<LocalStorage> uploadPictureV2(@RequestParam MultipartFile file){
+        // 判断文件是否为图片
+        String suffix = FileUtil.getExtensionName(file.getOriginalFilename());
+        if(!FileUtil.IMAGE.equals(FileUtil.getFileType(suffix))){
+            throw new BadRequestException("只能上传图片");
+        }
+        LocalStorage localStorage = localStorageService.createV2(null, file);
         return new ResponseEntity<>(localStorage, HttpStatus.OK);
     }
 

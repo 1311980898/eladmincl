@@ -5,7 +5,7 @@ spring:
       db-type: com.alibaba.druid.pool.DruidDataSource
       driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
       url: jdbc:log4jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:eladmin}?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
-      username: ${DB_USER:root}
+      username: ${DB_USER:wenger}
       password: ${DB_PWD:123456}
       # 初始连接数
       initial-size: 5
@@ -107,7 +107,7 @@ generator:
 
 #是否开启 swagger-ui
 swagger:
-  enabled: false
+  enabled: true
 
 # 文件存储路径
 file:
@@ -118,8 +118,8 @@ file:
     path: /home/eladmin/file/
     avatar: /home/eladmin/avatar/
   windows:
-    path: C:\eladmin\file\
-    avatar: C:\eladmin\avatar\
+    path: http://localhost:8000/
+    avatar: http://localhost:8000/
   # 文件大小 /M
   maxSize: 100
   avatarMaxSize: 5

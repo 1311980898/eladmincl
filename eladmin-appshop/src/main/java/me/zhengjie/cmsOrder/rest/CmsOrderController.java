@@ -16,6 +16,8 @@
 package me.zhengjie.cmsOrder.rest;
 
 import me.zhengjie.annotation.Log;
+import me.zhengjie.cmsFood.service.CmsFoodService;
+import me.zhengjie.cmsFood.service.dto.CmsFoodDto;
 import me.zhengjie.cmsOrder.domain.CmsOrder;
 import me.zhengjie.cmsOrder.service.CmsOrderService;
 import me.zhengjie.cmsOrder.service.dto.CmsOrderQueryCriteria;
@@ -44,6 +46,7 @@ import me.zhengjie.cmsOrder.service.dto.CmsOrderDto;
 public class CmsOrderController {
 
     private final CmsOrderService cmsOrderService;
+    private final CmsFoodService cmsFoodService;
 
     @Log("导出数据")
     @ApiOperation("导出数据")
@@ -58,7 +61,18 @@ public class CmsOrderController {
     @ApiOperation("查询cmsOrder")
     @PreAuthorize("@el.check('cmsOrder:list')")
     public ResponseEntity<PageResult<CmsOrderDto>> queryCmsOrder(CmsOrderQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(cmsOrderService.queryAll(criteria,pageable),HttpStatus.OK);
+        PageResult<CmsOrderDto> cmsOrderDtoPageResult = cmsOrderService.queryAll(criteria, pageable);
+        for (CmsOrderDto cmsOrderDto : cmsOrderDtoPageResult.getContent()) {
+            Integer productId = cmsOrderDto.getProductId();
+            CmsFoodDto byId = cmsFoodService.findById(productId);
+            if(null != byId){
+                cmsOrderDto.setFood(byId);
+                cmsOrderDto.setFoodName(byId.getFoodName());
+                cmsOrderDto.setFoodUrl(byId.getPhotoPath());
+            }
+        }
+
+        return new ResponseEntity<>(cmsOrderDtoPageResult,HttpStatus.OK);
     }
 
     @PostMapping
