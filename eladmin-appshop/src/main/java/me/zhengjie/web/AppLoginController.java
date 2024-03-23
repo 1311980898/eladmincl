@@ -31,7 +31,9 @@ import me.zhengjie.utils.MyUtil;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.enums.ResponseCodeEnums;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,6 +42,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -108,8 +111,16 @@ public class AppLoginController {
     @ApiOperation("查询订单列表")
     @PostMapping(value = "/getOrderList.do")
     @ResponseBody
-    public Map<String, Object> getOrderList(CmsOrderQueryCriteria criteria) {
-        List<CmsOrderDto> cmsOrderDtos = cmsOrderService.queryAll(criteria);
+    public Map<String, Object> getOrderList(CmsOrderQueryCriteria criteria,Pageable pageable) {
+        // 修改 pageable 对象，指定按 createTime 倒序排列
+        pageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "orderDate")
+        );
+
+        PageResult<CmsOrderDto> cmsOrderDtoPageResult = cmsOrderService.queryAll(criteria, pageable);
+        List<CmsOrderDto> cmsOrderDtos = cmsOrderDtoPageResult.getContent();
         for (CmsOrderDto cmsOrderDto : cmsOrderDtos) {
             Integer productId = cmsOrderDto.getProductId();
             CmsFoodDto byId = cmsFoodService.findById(productId);
@@ -137,12 +148,18 @@ public class AppLoginController {
         if (null == cmsOrder.getTotalAmount()) {
             return MyUtil.getResponseMessage(ResponseCodeEnums.REQUIRED_FAILED, "金额不能为空!");
         }
-
-        cmsOrder.setOrderNo(MyUtil.generateUniqueKey());
+        String orderNo = MyUtil.generateUniqueKey();
+        cmsOrder.setOrderNo(orderNo);
         cmsOrder.setOrderDate(MyUtil.getTimestamp());
         cmsOrder.setCreatedAt(MyUtil.getTimestamp());
         cmsOrder.setStatus("已支付");
         cmsOrderService.create(cmsOrder);
-        return MyUtil.getResponseMessage(ResponseCodeEnums.SUCCESS);
+        CmsOrderQueryCriteria criteria = new CmsOrderQueryCriteria();
+        criteria.setOrderNo(orderNo);
+        List<CmsOrderDto> cmsOrderDtos = cmsOrderService.queryAll(criteria);
+        CmsOrderDto cmsOrderDto = cmsOrderDtos.get(0);
+        Map<String,Object> order = new HashMap<>();
+        order.put("order",cmsOrderDto);
+        return MyUtil.getResponseMessage(ResponseCodeEnums.SUCCESS,order);
     }
 }
