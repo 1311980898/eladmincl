@@ -109,8 +109,8 @@ file:
     path: /home/eladmin/file/
     avatar: /home/eladmin/avatar/
   windows:
-    path: http://localhost:8000
-    avatar: http://localhost:8000
+    path: C:\eladmin\file\
+    avatar: C:\eladmin\avatar\
   # 文件大小 /M
   maxSize: 100
   avatarMaxSize: 5
