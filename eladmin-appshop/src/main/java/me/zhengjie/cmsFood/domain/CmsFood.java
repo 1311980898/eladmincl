@@ -65,7 +65,6 @@ public class CmsFood implements Serializable {
     private BigDecimal price;
 
     @Column(name = "`supplier`",nullable = false)
-    @NotBlank
     @ApiModelProperty(value = "供应商")
     private String supplier;
 
