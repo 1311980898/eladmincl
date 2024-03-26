@@ -16,8 +16,7 @@
 package me.zhengjie.cmsFood.service.impl;
 
 import me.zhengjie.cmsFood.domain.CmsFood;
-import me.zhengjie.utils.ValidationUtil;
-import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.*;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.cmsFood.repository.CmsFoodRepository;
 import me.zhengjie.cmsFood.service.CmsFoodService;
@@ -28,15 +27,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
+
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import me.zhengjie.utils.PageResult;
 
 /**
 * @website https://eladmin.vip
@@ -73,6 +70,9 @@ public class CmsFoodServiceImpl implements CmsFoodService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void create(CmsFood resources) {
+        if(StringUtils.isBlank(resources.getSupplier())){
+            resources.setSupplier("1");
+        }
         cmsFoodRepository.save(resources);
     }
 
